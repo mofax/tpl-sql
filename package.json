@@ -1,0 +1,17 @@
+{
+	"name": "tpl-sql",
+	"version": "0.0.0",
+	"private": false,
+	"type": "module",
+	"module": "build/main.js",
+	"scripts": {
+		"lint": "oxlint",
+		"fmt": "oxfmt"
+	},
+	"devDependencies": {
+		"@types/bun": "latest"
+	},
+	"files": [
+		"build"
+	]
+}
