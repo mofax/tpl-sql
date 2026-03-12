@@ -1,7 +1,15 @@
 {
 	"name": "tpl-sql",
-	"version": "0.0.0",
+	"version": "0.0.1",
 	"private": false,
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/mofax/tpl-sql"
+	},
+	"files": [
+		"build"
+	],
 	"type": "module",
 	"module": "build/main.js",
 	"scripts": {
@@ -10,8 +18,5 @@
 	},
 	"devDependencies": {
 		"@types/bun": "latest"
-	},
-	"files": [
-		"build"
-	]
+	}
 }
