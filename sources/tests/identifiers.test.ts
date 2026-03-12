@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { SQL } from "../main.ts";
 
 describe("safe identifiers", () => {
-	const sql = new SQL("sqlite");
+	const sql = SQL("sqlite");
 
 	test("simple table name", () => {
 		const q = sql`SELECT * FROM ${sql("users")}`;
@@ -22,7 +22,7 @@ describe("safe identifiers", () => {
 	});
 
 	test("identifier does not consume a parameter slot", () => {
-		const pg = new SQL("postgres");
+		const pg = SQL("postgres");
 		const q = pg`SELECT * FROM ${pg("users")} WHERE id = ${1}`;
 		expect(q.sql).toBe(`SELECT * FROM "users" WHERE id = $1`);
 		expect(q.values).toEqual([1]);

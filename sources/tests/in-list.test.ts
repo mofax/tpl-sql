@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { SQL } from "../main.ts";
 
 describe("IN-list expansion", () => {
-	const sql = new SQL("sqlite");
+	const sql = SQL("sqlite");
 
 	test("array of numbers", () => {
 		const q = sql`SELECT * FROM users WHERE id IN ${sql([1, 2, 3])}`;
@@ -11,14 +11,14 @@ describe("IN-list expansion", () => {
 	});
 
 	test("array of numbers (postgres)", () => {
-		const pg = new SQL("postgres");
+		const pg = SQL("postgres");
 		const q = pg`SELECT * FROM users WHERE id IN ${pg([1, 2, 3])}`;
 		expect(q.sql).toBe("SELECT * FROM users WHERE id IN ($1, $2, $3)");
 		expect(q.values).toEqual([1, 2, 3]);
 	});
 
 	test("array of numbers (oracle)", () => {
-		const ora = new SQL("oracle");
+		const ora = SQL("oracle");
 		const q = ora`SELECT * FROM users WHERE id IN ${ora([1, 2, 3])}`;
 		expect(q.sql).toBe("SELECT * FROM users WHERE id IN (:1, :2, :3)");
 		expect(q.values).toEqual([1, 2, 3]);
@@ -37,7 +37,7 @@ describe("IN-list expansion", () => {
 	});
 
 	test("parameter indices account for preceding params", () => {
-		const pg = new SQL("postgres");
+		const pg = SQL("postgres");
 		const q = pg`SELECT * FROM users WHERE active = ${true} AND id IN ${pg([1, 2, 3])}`;
 		expect(q.sql).toBe("SELECT * FROM users WHERE active = $1 AND id IN ($2, $3, $4)");
 		expect(q.values).toEqual([true, 1, 2, 3]);

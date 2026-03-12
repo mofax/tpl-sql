@@ -13,7 +13,7 @@ bun add tpl-sql
 ```ts
 import { SQL } from "tpl-sql";
 
-const sql = new SQL("postgres");
+const sql = SQL("postgres");
 
 const id = 42;
 const query = sql`SELECT * FROM books WHERE id = ${id}`;
@@ -26,13 +26,13 @@ Every interpolated value becomes a bound parameter — no string concatenation, 
 
 ## Dialects
 
-Choose your dialect when creating the instance:
+Choose your dialect when creating the sql function:
 
 ```ts
-const sqlite = new SQL("sqlite"); // ? placeholders
-const mysql = new SQL("mysql"); // ? placeholders
-const pg = new SQL("postgres"); // $1, $2, … placeholders
-const oracle = new SQL("oracle"); // :1, :2, … placeholders
+const sqlite = SQL("sqlite"); // ? placeholders
+const mysql = SQL("mysql"); // ? placeholders
+const pg = SQL("postgres"); // $1, $2, … placeholders
+const oracle = SQL("oracle"); // :1, :2, … placeholders
 ```
 
 | Dialect    | Placeholder style |
@@ -49,7 +49,7 @@ const oracle = new SQL("oracle"); // :1, :2, … placeholders
 Interpolations become bound parameters:
 
 ```ts
-const sql = new SQL("postgres");
+const sql = SQL("postgres");
 const q = sql`SELECT * FROM users WHERE name = ${"Alice"} AND age > ${21}`;
 q.sql; // "SELECT * FROM users WHERE name = $1 AND age > $2"
 q.values; // ["Alice", 21]

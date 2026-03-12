@@ -134,59 +134,52 @@ function isTemplateStringsArray(value: unknown): value is TemplateStringsArray {
 	return Array.isArray(value) && "raw" in value;
 }
 
-export interface SqlFn {
+export interface SQL {
 	(strings: TemplateStringsArray, ...expressions: unknown[]): SqlQuery;
 	(first: string | unknown[] | Record<string, unknown>, ...rest: string[]): SqlHelperNode;
 }
 
-export class SQL {
-	constructor(dialect: Dialect) {
-		const fn = function (
-			first: TemplateStringsArray | string | unknown[] | Record<string, unknown>,
-			...rest: unknown[]
-		): SqlQuery | SqlHelperNode {
-			if (isTemplateStringsArray(first)) {
-				const nodes: SqlNode[] = [];
-				const strings = first;
-				const expressions = rest;
+export function SQL(dialect: Dialect): SQL {
+	return function (
+		first: TemplateStringsArray | string | unknown[] | Record<string, unknown>,
+		...rest: unknown[]
+	): SqlQuery | SqlHelperNode {
+		if (isTemplateStringsArray(first)) {
+			const nodes: SqlNode[] = [];
+			const strings = first;
+			const expressions = rest;
 
-				for (let i = 0; i < strings.length; i++) {
-					const rawStr = strings[i]!;
-					if (rawStr.length > 0) {
-						nodes.push({ kind: "raw", value: rawStr });
-					}
-
-					if (i < expressions.length) {
-						const expr = expressions[i];
-
-						if (expr instanceof SqlQuery) {
-							nodes.push({ kind: "fragment", value: expr });
-						} else if (isSqlHelperNode(expr)) {
-							if (expr.needsDisambiguation) {
-								const obj = (expr.node as { kind: "param"; value: unknown }).value as Record<
-									string,
-									unknown
-								>;
-								const precedingRaw = collectPrecedingRaw(nodes);
-								nodes.push(disambiguateObject(obj, precedingRaw));
-							} else {
-								nodes.push(expr.node);
-							}
-						} else {
-							nodes.push({ kind: "param", value: expr });
-						}
-					}
+			for (let i = 0; i < strings.length; i++) {
+				const rawStr = strings[i]!;
+				if (rawStr.length > 0) {
+					nodes.push({ kind: "raw", value: rawStr });
 				}
 
-				return new SqlQuery(nodes, dialect);
+				if (i < expressions.length) {
+					const expr = expressions[i];
+
+					if (expr instanceof SqlQuery) {
+						nodes.push({ kind: "fragment", value: expr });
+					} else if (isSqlHelperNode(expr)) {
+						if (expr.needsDisambiguation) {
+							const obj = (expr.node as { kind: "param"; value: unknown }).value as Record<
+								string,
+								unknown
+							>;
+							const precedingRaw = collectPrecedingRaw(nodes);
+							nodes.push(disambiguateObject(obj, precedingRaw));
+						} else {
+							nodes.push(expr.node);
+						}
+					} else {
+						nodes.push({ kind: "param", value: expr });
+					}
+				}
 			}
 
-			return sqlHelper(
-				first as string | unknown[] | Record<string, unknown>,
-				...(rest as string[]),
-			);
-		};
+			return new SqlQuery(nodes, dialect);
+		}
 
-		return fn as unknown as SQL;
-	}
+		return sqlHelper(first as string | unknown[] | Record<string, unknown>, ...(rest as string[]));
+	} as SQL;
 }

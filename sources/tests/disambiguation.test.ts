@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { SQL } from "../main.ts";
 
 describe("context-sensitive sql() disambiguation", () => {
-	const sql = new SQL("sqlite");
+	const sql = SQL("sqlite");
 
 	test("sql(obj) after INSERT INTO produces insert", () => {
 		const data = { a: 1, b: 2 };

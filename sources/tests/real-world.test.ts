@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { SQL } from "../main.ts";
 
 describe("combined real-world queries", () => {
-	const sql = new SQL("sqlite");
+	const sql = SQL("sqlite");
 
 	test("select with dynamic table, IN-list, and conditional filter", () => {
 		const minAge = 21;
@@ -25,7 +25,7 @@ describe("combined real-world queries", () => {
 	});
 
 	test("update with dynamic columns and where clause", () => {
-		const pg = new SQL("postgres");
+		const pg = SQL("postgres");
 		const user = { id: 5, name: "Bob", email: "bob@example.com", age: 30 };
 		const q = pg`UPDATE ${pg("users")} SET ${pg(user, "name", "email")} WHERE id = ${user.id} AND age > ${18}`;
 		expect(q.sql).toBe(`UPDATE "users" SET "name" = $1, "email" = $2 WHERE id = $3 AND age > $4`);
@@ -33,7 +33,7 @@ describe("combined real-world queries", () => {
 	});
 
 	test("complex query with multiple features", () => {
-		const pg = new SQL("postgres");
+		const pg = SQL("postgres");
 		const status = "active";
 		const ids = [10, 20, 30];
 		const extraFilter = pg`AND created_at > ${new Date("2024-01-01")}`;
@@ -53,7 +53,7 @@ describe("combined real-world queries", () => {
 	});
 
 	test("direct values in INSERT", () => {
-		const pg = new SQL("postgres");
+		const pg = SQL("postgres");
 		const name = "Alice";
 		const email = "alice@example.com";
 		const q = pg`INSERT INTO users (name, email) VALUES (${name}, ${email}) RETURNING *`;

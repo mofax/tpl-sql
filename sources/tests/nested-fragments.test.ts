@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { SQL } from "../main.ts";
 
 describe("nested fragments", () => {
-	const sql = new SQL("sqlite");
+	const sql = SQL("sqlite");
 
 	test("nested sql fragment is composed inline", () => {
 		const where = sql`WHERE id = ${1}`;
@@ -52,7 +52,7 @@ describe("nested fragments", () => {
 	});
 
 	test("parameter indices are correct across nested fragments (postgres)", () => {
-		const pg = new SQL("postgres");
+		const pg = SQL("postgres");
 		const a = pg`a = ${1}`;
 		const b = pg`b = ${2}`;
 		const q = pg`SELECT * FROM t WHERE ${a} AND ${b} AND c = ${3}`;

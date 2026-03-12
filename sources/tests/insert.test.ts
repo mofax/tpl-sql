@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { SQL } from "../main.ts";
 
 describe("insert helper", () => {
-	const sql = new SQL("sqlite");
+	const sql = SQL("sqlite");
 
 	test("single object insert", () => {
 		const userData = { name: "Alice", email: "alice@example.com" };
@@ -12,7 +12,7 @@ describe("insert helper", () => {
 	});
 
 	test("single object insert (postgres)", () => {
-		const pg = new SQL("postgres");
+		const pg = SQL("postgres");
 		const userData = { name: "Alice", email: "alice@example.com" };
 		const q = pg`INSERT INTO users ${pg(userData)}`;
 		expect(q.sql).toBe(`INSERT INTO users ("name", "email") VALUES ($1, $2)`);
@@ -45,7 +45,7 @@ describe("insert helper", () => {
 	});
 
 	test("bulk insert with array of objects (postgres)", () => {
-		const pg = new SQL("postgres");
+		const pg = SQL("postgres");
 		const users = [
 			{ name: "Alice", email: "alice@example.com" },
 			{ name: "Bob", email: "bob@example.com" },
