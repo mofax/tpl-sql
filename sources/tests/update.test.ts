@@ -39,4 +39,12 @@ describe("update helper", () => {
 		expect(q.sql).toBe(`UPDATE users SET "name" = ? WHERE id = ?`);
 		expect(q.values).toEqual([null, 1]);
 	});
+
+	test("update with postgres param indices across helpers", () => {
+		const pg = SQL("postgres");
+		const user = { name: "Alice", email: "alice@example.com" };
+		const q = pg`UPDATE users SET ${pg(user, "name", "email")} WHERE active = ${true} AND id = ${5}`;
+		expect(q.sql).toBe(`UPDATE users SET "name" = $1, "email" = $2 WHERE active = $3 AND id = $4`);
+		expect(q.values).toEqual(["Alice", "alice@example.com", true, 5]);
+	});
 });

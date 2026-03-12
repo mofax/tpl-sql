@@ -59,4 +59,28 @@ describe("nested fragments", () => {
 		expect(q.sql).toBe("SELECT * FROM t WHERE a = $1 AND b = $2 AND c = $3");
 		expect(q.values).toEqual([1, 2, 3]);
 	});
+
+	test("fragment containing an identifier helper", () => {
+		const pg = SQL("postgres");
+		const frag = pg`SELECT * FROM ${pg("users")}`;
+		const q = pg`${frag} WHERE id = ${1}`;
+		expect(q.sql).toBe(`SELECT * FROM "users" WHERE id = $1`);
+		expect(q.values).toEqual([1]);
+	});
+
+	test("fragment containing a list helper", () => {
+		const frag = sql`WHERE id IN ${sql([10, 20, 30])}`;
+		const q = sql`SELECT * FROM users ${frag} AND active = ${true}`;
+		expect(q.sql).toBe("SELECT * FROM users WHERE id IN (?, ?, ?) AND active = ?");
+		expect(q.values).toEqual([10, 20, 30, true]);
+	});
+
+	test("oracle dialect param indices across nested fragments", () => {
+		const ora = SQL("oracle");
+		const a = ora`a = ${1}`;
+		const b = ora`b = ${2}`;
+		const q = ora`SELECT * FROM t WHERE ${a} AND ${b} AND c = ${3}`;
+		expect(q.sql).toBe("SELECT * FROM t WHERE a = :1 AND b = :2 AND c = :3");
+		expect(q.values).toEqual([1, 2, 3]);
+	});
 });

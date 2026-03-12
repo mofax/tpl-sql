@@ -52,6 +52,7 @@ describe("insert helper", () => {
 		];
 		const q = pg`INSERT INTO users ${pg(users)}`;
 		expect(q.sql).toBe(`INSERT INTO users ("name", "email") VALUES ($1, $2), ($3, $4)`);
+		expect(q.values).toEqual(["Alice", "alice@example.com", "Bob", "bob@example.com"]);
 	});
 
 	test("single-row bulk insert (array with one object)", () => {
